@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-gradient {
+    background-size: 300%;
+    -webkit-animation: animatedgradient 6s ease infinite alternate;
+    animation: animatedgradient 6s ease infinite alternate;
+  }
+
+  .animate-gradient-reverse {
+    background-size: 300%;
+    -webkit-animation: animatedgradient 6s ease infinite alternate-reverse;
+    animation: animatedgradient 6s ease infinite alternate-reverse;
+  }
+
+  @keyframes animatedgradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}
