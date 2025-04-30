@@ -1,7 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 export default function Footer() {
+  const location = useLocation();
+  
+  // Don't render footer on admin routes
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
   const footerLinks = {
     company: [
       { name: 'About', path: '/about' },

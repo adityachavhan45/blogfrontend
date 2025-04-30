@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Header() {
+  const location = useLocation();
+  
+  // Don't render header on admin routes
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
