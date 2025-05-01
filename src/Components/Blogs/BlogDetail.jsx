@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
@@ -40,6 +40,9 @@ const BlogDetail = () => {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isContentExpanded, setIsContentExpanded] = useState(false);
+  const [contentHeight, setContentHeight] = useState(0);
+  const contentRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -55,6 +58,19 @@ const BlogDetail = () => {
       document.body.classList.remove('bg-[#0f1117]');
     };
   }, [id]);
+  
+  // Effect to measure content height after blog loads
+  useEffect(() => {
+    if (blog && contentRef.current) {
+      // Use a small delay to ensure content is fully rendered
+      const timer = setTimeout(() => {
+        const height = contentRef.current.scrollHeight;
+        setContentHeight(height);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [blog]);
   
   const checkLoginStatus = () => {
     const token = localStorage.getItem('token');
@@ -317,13 +333,43 @@ const BlogDetail = () => {
             className="bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-2xl border border-gray-800/50 hover:border-gray-700/50 transition-all duration-300"
           >
             <div className="prose prose-lg max-w-none prose-invert prose-headings:text-white prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:text-white prose-p:leading-relaxed prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-cyan-500 prose-blockquote:bg-gray-800/30 prose-blockquote:py-0.5 prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-strong:text-white prose-code:text-pink-400 prose-pre:bg-gray-800/50 prose-pre:border prose-pre:border-gray-700/50 prose-img:rounded-lg prose-img:shadow-lg text-white [&_*]:text-white quill-content">
-  <div
-    dangerouslySetInnerHTML={{
-      __html: DOMPurify.sanitize(blog.content),
-    }}
-  />
-</div>
-
+              <div
+                ref={contentRef}
+                className={!isContentExpanded && contentHeight > 500 ? 'max-h-[500px] overflow-hidden relative' : ''}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(blog.content),
+                }}
+              />
+              
+              {!isContentExpanded && contentHeight > 500 && (
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px' }} className="bg-gradient-to-t from-[#1a1d25] to-transparent pointer-events-none"></div>
+              )}
+            </div>
+            
+            {contentHeight > 500 && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setIsContentExpanded(!isContentExpanded)}
+                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:translate-y-[-2px]"
+                >
+                  {isContentExpanded ? (
+                    <>
+                      <span>Show Less</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                      </svg>
+                    </>
+                  ) : (
+                    <>
+                      <span>Read More</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </motion.div>
           
           {/* Comments Section */}
