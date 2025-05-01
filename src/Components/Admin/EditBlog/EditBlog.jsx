@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import './custom-quill.css'; // Import custom styles for the editor
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -120,11 +121,27 @@ const EditBlog = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-1">Content</label>
-          <div className="bg-white rounded-lg">
+          <div className="prose prose-invert max-w-none">
             <ReactQuill
+              theme="snow"
               value={formData.content}
               onChange={handleContentChange}
-              className="h-64"
+              className="bg-[#272a31] rounded-lg text-gray-200 custom-quill-editor"
+              modules={{
+                toolbar: {
+                  container: [
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ align: [] }], // Add alignment options
+                    [{ indent: '-1' }, { indent: '+1' }], // Add indentation options
+                    ['link', 'image', 'code-block'],
+                    [{ color: [] }, { background: [] }], // Add color options
+                    ['clean']
+                  ],
+                  handlers: {}
+                }
+              }}
             />
           </div>
         </div>

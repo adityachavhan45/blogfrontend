@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import './custom-quill.css'; // Import custom styles for the editor
 import { motion } from 'framer-motion';
 import { FaImage, FaTags, FaClock, FaFolder } from 'react-icons/fa';
 
@@ -19,6 +20,18 @@ const AddBlog = () => {
   const [error, setError] = useState(null);
   const [tagInput, setTagInput] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  
+  // State to control editor visibility
+  const [editorVisible, setEditorVisible] = useState(false);
+  
+  // Show editor after a small delay to ensure toolbar positioning
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setEditorVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -118,7 +131,7 @@ const AddBlog = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto bg-[#1a1d25] rounded-lg shadow-xl p-6 space-y-8"
+        className="max-w-4xl mx-auto bg-[#1a1d25] rounded-lg shadow-xl p-6 space-y-8 relative"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white">Create New Blog</h2>
@@ -173,21 +186,33 @@ const AddBlog = () => {
               Content
             </label>
             <div className="prose prose-invert max-w-none">
-              <ReactQuill
-                theme="snow"
-                value={formData.content}
-                onChange={handleContentChange}
-                className="bg-[#272a31] rounded-lg text-gray-200"
-                modules={{
-                  toolbar: [
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    ['link', 'image', 'code-block'],
-                    ['clean']
-                  ]
-                }}
-              />
+              {editorVisible ? (
+                <ReactQuill
+                  theme="snow"
+                  value={formData.content}
+                  onChange={handleContentChange}
+                  className="bg-[#272a31] rounded-lg text-gray-200 custom-quill-editor"
+                  modules={{
+                    toolbar: {
+                      container: [
+                        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        [{ align: [] }], // Add alignment options
+                        [{ indent: '-1' }, { indent: '+1' }], // Add indentation options
+                        ['link', 'image', 'code-block'],
+                        [{ color: [] }, { background: [] }], // Add color options
+                        ['clean']
+                      ],
+                      handlers: {}
+                    }
+                  }}
+                />
+              ) : (
+                <div className="bg-[#272a31] rounded-lg text-gray-200 h-[300px] flex items-center justify-center">
+                  <span className="text-gray-500">Loading editor...</span>
+                </div>
+              )}
             </div>
           </div>
 

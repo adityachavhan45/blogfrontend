@@ -1,0 +1,116 @@
+/* Custom styles for ReactQuill editor */
+
+/* Position toolbar at the top of the content */
+.custom-quill-editor .ql-toolbar.ql-snow {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background-color: #1a1d25;
+  border-color: #2a2e3a;
+  border-width: 1px;
+  padding: 10px;
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Style the editor container */
+.custom-quill-editor .ql-container.ql-snow {
+  border-color: #3f4555;
+  border-radius: 0 0 8px 8px;
+  height: 500px;
+  max-height: 500px;
+  overflow-y: auto;
+  border-top: 0;
+  
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #4a5568 #1a1d25;
+}
+
+/* Webkit scrollbar styling (Chrome, Safari, Edge) */
+.custom-quill-editor .ql-container.ql-snow::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-quill-editor .ql-container.ql-snow::-webkit-scrollbar-track {
+  background: #1a1d25;
+  border-radius: 0 0 8px 0;
+}
+
+.custom-quill-editor .ql-container.ql-snow::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+  border-radius: 4px;
+}
+
+.custom-quill-editor .ql-container.ql-snow::-webkit-scrollbar-thumb:hover {
+  background-color: #e052a0;
+}
+
+/* Style the toolbar buttons */
+.custom-quill-editor .ql-toolbar.ql-snow .ql-formats {
+  margin-right: 15px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Style the editor content area */
+.custom-quill-editor .ql-editor {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+/* Improve button hover states */
+.custom-quill-editor .ql-toolbar.ql-snow button:hover,
+.custom-quill-editor .ql-toolbar.ql-snow .ql-picker-label:hover {
+  color: #e052a0;
+}
+
+.custom-quill-editor .ql-toolbar.ql-snow button.ql-active,
+.custom-quill-editor .ql-toolbar.ql-snow .ql-picker-label.ql-active {
+  color: #e052a0;
+}
+
+/* Adjust dropdown menus to be visible */
+.custom-quill-editor .ql-toolbar .ql-picker-options {
+  background-color: #272a31;
+  border-color: #3f4555;
+}
+
+/* Style the alignment buttons */
+.custom-quill-editor .ql-align .ql-picker-label::before,
+.custom-quill-editor .ql-align .ql-picker-item::before {
+  color: #e0e0e0;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .custom-quill-editor .ql-toolbar.ql-snow {
+    padding: 8px 5px;
+  }
+  
+  .custom-quill-editor .ql-toolbar.ql-snow .ql-formats {
+    margin-right: 8px;
+    margin-bottom: 5px;
+  }
+}
+
+/* Style individual buttons to match the image */
+.custom-quill-editor .ql-toolbar.ql-snow button,
+.custom-quill-editor .ql-toolbar.ql-snow .ql-picker-label {
+  color: #6b7280;
+}
+
+/* Add more space between button groups */
+.custom-quill-editor .ql-toolbar.ql-snow .ql-formats + .ql-formats {
+  margin-top: 0;
+  padding-left: 15px;
+  border-left: 1px solid #2a2e3a;
+}

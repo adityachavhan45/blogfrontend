@@ -1,6 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
+import { motion } from 'framer-motion';
+import './quill-content.css'; // Import the CSS for ReactQuill content
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1]
+    }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
 
 const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
@@ -12,6 +37,7 @@ const BlogDetail = () => {
     fetchBlog();
     // Add a class to the body to prevent background color issues
     document.body.classList.add('bg-[#0f1117]');
+    window.scrollTo(0, 0);
     return () => {
       document.body.classList.remove('bg-[#0f1117]');
     };
@@ -32,85 +58,245 @@ const BlogDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1117] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center text-gray-400">Loading blog...</div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 rounded-full border-t-2 border-l-2 border-r-2 border-transparent border-t-cyan-500 animate-spin"></div>
+            <div className="absolute inset-1 rounded-full border-b-2 border-l-2 border-r-2 border-transparent border-b-purple-500 animate-spin animation-delay-150"></div>
+            <div className="absolute inset-2 rounded-full border-t-2 border-l-2 border-transparent border-l-pink-500 animate-spin animation-delay-300"></div>
+            <div className="absolute inset-3 rounded-full border-b-2 border-transparent border-r-amber-500 animate-spin animation-delay-500"></div>
+          </div>
+          <div className="bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 bg-clip-text text-transparent text-xl font-bold">Loading article...</div>
+          <div className="text-gray-500 text-sm animate-pulse">Please wait a moment</div>
+        </motion.div>
       </div>
     );
   }
 
   if (!blog) {
     return (
-      <div className="min-h-screen bg-[#0f1117] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center text-red-400">Blog not found</div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center bg-[#1a1d25]/80 backdrop-blur-lg p-8 rounded-2xl border border-red-500/20 max-w-md"
+        >
+          <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-red-500/10 mb-4">
+            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">Article not found</h3>
+          <p className="text-gray-400 mb-6">The article you're looking for doesn't exist or has been removed.</p>
+          <Link 
+            to="/blogs" 
+            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to blogs
+          </Link>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1117] py-8 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
-      <article className="max-w-4xl mx-auto space-y-6">
-        {/* Cover Image */}
-        {blog.coverImage && (
-          <div className="relative rounded-2xl overflow-hidden bg-[#1a1d25] shadow-xl">
-            <img
-              src={`http://localhost:5000${blog.coverImage}`}
-              alt={blog.title}
-              onClick={() => setShowImageModal(true)}
-              className="w-full h-[350px] object-cover hover:scale-105 transition-transform duration-700 cursor-zoom-in"
-            />
-          </div>
-        )}
-
-        <div className="bg-[#1a1d25] rounded-2xl p-8 shadow-xl">
-          {/* Title */}
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6">{blog.title}</h1>
-
-          {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-4 text-sm mb-6">
-            <span className="bg-[#e052a0]/20 text-[#e052a0] px-3 py-1 rounded-full">{blog.category}</span>
-            <span className="text-gray-400">{new Date(blog.createdAt).toLocaleDateString()}</span>
-            <span className="text-gray-400">{blog.readTime} min read</span>
-          </div>
-
-          {/* Tags */}
-          {blog.tags && blog.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {blog.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="text-gray-400 text-sm"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {showImageModal && (
-          <div
-            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-            onClick={() => setShowImageModal(false)}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-pink-500/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-blue-500/5 rounded-full blur-[140px] animate-pulse delay-1000"></div>
+        <div className="absolute top-1/3 right-1/3 w-[300px] h-[300px] bg-cyan-500/5 rounded-full blur-[80px] animate-pulse delay-500"></div>
+      </div>
+      
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="max-w-5xl mx-auto relative z-10"
+      >
+        {/* Back button */}
+        <motion.div variants={fadeIn} className="mb-8">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors duration-300 group"
           >
+            <svg className="w-5 h-5 transform transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span className="text-sm font-medium">Back to all articles</span>
+          </Link>
+        </motion.div>
+        
+        <article className="space-y-8">
+          {/* Category Badge */}
+          <motion.div variants={fadeIn} className="mb-4">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500 to-purple-500 text-white">
+              {blog.category}
+            </span>
+          </motion.div>
+          
+          {/* Title */}
+          <motion.h1 
+            variants={fadeIn} 
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-100 to-gray-300"
+          >
+            {blog.title}
+          </motion.h1>
+          
+          {/* Meta Info */}
+          <motion.div 
+            variants={fadeIn} 
+            className="flex flex-wrap items-center gap-6 text-sm border-b border-gray-800/30 pb-6"
+          >
+            <div className="flex items-center gap-2 text-gray-400">
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>{new Date(blog.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-gray-400">
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{blog.readTime} min read</span>
+            </div>
+            
+            {blog.tags && blog.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {blog.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="text-gray-400 text-sm bg-gray-800/30 px-2 py-0.5 rounded-md"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </motion.div>
+          
+          {/* Cover Image */}
+          {blog.coverImage && (
+            <motion.div 
+              variants={fadeIn}
+              className="relative rounded-2xl overflow-hidden bg-[#1a1d25]/60 shadow-xl border border-gray-800/50 my-8 group hover:shadow-purple-500/10 transition-all duration-500"
+            >
+              <img
+                src={`http://localhost:5000${blog.coverImage}`}
+                alt={blog.title}
+                onClick={() => setShowImageModal(true)}
+                className="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f1117]/80 via-transparent to-transparent pointer-events-none"></div>
+              <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m4-3H6" />
+                </svg>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Content */}
+          <motion.div 
+            variants={fadeIn}
+            className="bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-2xl border border-gray-800/50 hover:border-gray-700/50 transition-all duration-300"
+          >
+            <div className="prose prose-lg max-w-none prose-invert prose-headings:text-white prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:text-white prose-p:leading-relaxed prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-cyan-500 prose-blockquote:bg-gray-800/30 prose-blockquote:py-0.5 prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-strong:text-white prose-code:text-pink-400 prose-pre:bg-gray-800/50 prose-pre:border prose-pre:border-gray-700/50 prose-img:rounded-lg prose-img:shadow-lg text-white [&_*]:text-white quill-content">
+  <div
+    dangerouslySetInnerHTML={{
+      __html: DOMPurify.sanitize(blog.content),
+    }}
+  />
+</div>
+
+          </motion.div>
+          
+          {/* Share and navigation */}
+          <motion.div 
+            variants={fadeIn}
+            className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-800/30"
+          >
+            <div className="flex items-center gap-4">
+              <span className="text-gray-400 text-sm font-medium">Share this article:</span>
+              <div className="flex gap-3">
+                <button className="w-9 h-9 rounded-full bg-gray-800/70 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300 shadow-md">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
+                  </svg>
+                </button>
+                <button className="w-9 h-9 rounded-full bg-gray-800/70 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300 shadow-md">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path>
+                  </svg>
+                </button>
+                <button className="w-9 h-9 rounded-full bg-gray-800/70 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300 shadow-md">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <Link 
+              to="/" 
+              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:translate-y-[-2px]"
+            >
+              <span>More articles</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
+          </motion.div>
+        </article>
+      </motion.div>
+      
+      {/* Image Modal */}
+      {showImageModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 backdrop-blur-md"
+          onClick={() => setShowImageModal(false)}
+        >
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: 'spring', damping: 20 }}
+            className="relative max-w-6xl w-full"
+            onClick={e => e.stopPropagation()}
+          >
+            <button 
+              className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/70 flex items-center justify-center text-white hover:bg-black transition-colors z-10 shadow-lg"
+              onClick={() => setShowImageModal(false)}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
             <img
               src={`http://localhost:5000${blog.coverImage}`}
               alt={blog.title}
-              className="max-w-full max-h-[90vh] object-contain"
+              className="max-w-full max-h-[85vh] object-contain mx-auto rounded-xl shadow-2xl border border-gray-800/30"
             />
-          </div>
-        )}
-
-        <div className="mt-8 bg-[#1a1d25] rounded-2xl p-8 shadow-xl">
-          <div className="prose prose-lg max-w-none text-white prose-headings:text-white prose-p:text-white prose-strong:text-white prose-li:text-white prose-blockquote:text-white prose-code:text-white prose-pre:bg-[#0f1117] prose-a:text-[#e052a0] hover:prose-a:text-[#d0408f] prose-img:rounded-lg prose-img:shadow-lg">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(blog.content),
-              }}
-            />
-          </div>
-        </div>
-
-      </article>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 };
