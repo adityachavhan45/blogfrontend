@@ -146,11 +146,13 @@ export default function Header() {
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
                 placeholder="Search blogs..."
-                className="w-full px-4 py-2 pl-10 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent text-gray-300 placeholder-gray-500 transition-all duration-300"
+                className="w-full px-4 py-2 pl-10 bg-gray-800/70 border border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent text-gray-300 placeholder-gray-400 transition-all duration-300 shadow-inner shadow-black/20"
+                aria-label="Search blogs"
               />
               <button
                 type="submit"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-400 transition-colors duration-200"
+                aria-label="Submit search"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -321,11 +323,13 @@ export default function Header() {
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   placeholder="Search blogs..."
-                  className="w-full px-4 py-3 pl-10 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent text-gray-300 placeholder-gray-500 text-lg transition-all duration-300"
+                  className="w-full px-4 py-3 pl-10 bg-gray-800/70 border border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent text-gray-300 placeholder-gray-400 text-lg transition-all duration-300 shadow-inner shadow-black/20"
+                  aria-label="Search blogs"
                 />
                 <button
                   type="submit"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-400 transition-colors duration-200"
+                  aria-label="Submit search"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

@@ -349,7 +349,33 @@ const BlogDetail = () => {
             {contentHeight > 500 && (
               <div className="mt-6 text-center">
                 <button
-                  onClick={() => setIsContentExpanded(!isContentExpanded)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Store current scroll position
+                    const currentScrollPos = window.scrollY;
+                    const wasExpanded = isContentExpanded;
+                    
+                    // Update state
+                    setIsContentExpanded(!wasExpanded);
+                    
+                    // Use setTimeout to maintain scroll position after state update
+                    setTimeout(() => {
+                      // When collapsing, we need to adjust for the reduced content height
+                      if (wasExpanded) {
+                        // Get the button's position to scroll to it
+                        const buttonElement = e.currentTarget;
+                        const buttonRect = buttonElement.getBoundingClientRect();
+                        const targetScrollPosition = window.scrollY + buttonRect.top - 200; // Position button in view
+                        window.scrollTo({
+                          top: targetScrollPosition,
+                          behavior: 'smooth'
+                        });
+                      } else {
+                        // When expanding, maintain current position
+                        window.scrollTo(0, currentScrollPos);
+                      }
+                    }, 10);
+                  }}
                   className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:translate-y-[-2px]"
                 >
                   {isContentExpanded ? (

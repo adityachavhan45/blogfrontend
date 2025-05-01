@@ -12,6 +12,7 @@ import AdminDashboard from './Components/Admin/AdminDashboard'
 import AddBlog from './Components/Admin/AddBlog/AddBlog'
 import EditBlog from './Components/Admin/EditBlog/EditBlog'
 import BlogDetail from './Components/Blogs/BlogDetail'
+import SearchResults from './Components/Search/SearchResults'
 import ScrollToTop from './Components/ScrollToTop'
 
 function AppContent() {
@@ -29,6 +30,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blog/:id" element={<BlogDetail />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/about" element={<Aboutus />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
