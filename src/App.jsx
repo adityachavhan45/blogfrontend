@@ -12,6 +12,7 @@ import AdminDashboard from './Components/Admin/AdminDashboard'
 import AddBlog from './Components/Admin/AddBlog/AddBlog'
 import EditBlog from './Components/Admin/EditBlog/EditBlog'
 import BlogDetail from './Components/Blogs/BlogDetail'
+import ScrollToTop from './Components/ScrollToTop'
 
 function AppContent() {
   const location = useLocation();
@@ -19,6 +20,9 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Add ScrollToTop component to handle scroll restoration */}
+      <ScrollToTop />
+      
       {!isAdminRoute && <Header />}
       <main className={`${isAdminRoute ? 'min-h-screen bg-[#111827]' : 'flex-grow'}`}>
         <Routes>

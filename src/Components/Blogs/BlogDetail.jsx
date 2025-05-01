@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
+import { FaUser, FaComment, FaPaperPlane, FaLock } from 'react-icons/fa';
 import './quill-content.css'; // Import the CSS for ReactQuill content
 
 const fadeIn = {
@@ -31,17 +32,34 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(true);
+  const [commentForm, setCommentForm] = useState({
+    content: ''
+  });
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [commentError, setCommentError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBlog();
+    fetchComments();
+    checkLoginStatus();
     // Add a class to the body to prevent background color issues
     document.body.classList.add('bg-[#0f1117]');
+    // Only scroll to top when the blog ID changes
     window.scrollTo(0, 0);
     return () => {
       document.body.classList.remove('bg-[#0f1117]');
     };
   }, [id]);
+  
+  const checkLoginStatus = () => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  };
 
   const fetchBlog = async () => {
     try {
@@ -54,6 +72,72 @@ const BlogDetail = () => {
       console.error('Error fetching blog:', error);
       setLoading(false);
     }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/comments/blog/${id}`);
+      if (!response.ok) throw new Error('Failed to fetch comments');
+      const data = await response.json();
+      setComments(data);
+      setLoadingComments(false);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      setLoadingComments(false);
+    }
+  };
+
+  const handleCommentChange = (e) => {
+    const { name, value } = e.target;
+    setCommentForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    setCommentError(null);
+    setSubmittingComment(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('You must be logged in to comment');
+      }
+      
+      const response = await fetch('http://localhost:5000/api/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          blogId: id,
+          content: commentForm.content
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit comment');
+      }
+      
+      const newComment = await response.json();
+      setComments(prev => [newComment, ...prev]);
+      setCommentForm({
+        content: ''
+      });
+      setSubmittingComment(false);
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      setCommentError(error.message);
+      setSubmittingComment(false);
+    }
+  };
+  
+  const handleLoginRedirect = () => {
+    navigate('/login', { state: { from: `/blogs/${id}` } });
   };
 
   if (loading) {
@@ -125,8 +209,12 @@ const BlogDetail = () => {
         {/* Back button */}
         <motion.div variants={fadeIn} className="mb-8">
           <Link 
-            to="/" 
+            to="/blogs" 
             className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors duration-300 group"
+            onClick={(e) => {
+              // Store current scroll position in sessionStorage before navigating
+              sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+            }}
           >
             <svg className="w-5 h-5 transform transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -150,12 +238,21 @@ const BlogDetail = () => {
           >
             {blog.title}
           </motion.h1>
-          
-          {/* Meta Info */}
+                    {/* Meta Info */}
           <motion.div 
             variants={fadeIn} 
             className="flex flex-wrap items-center gap-6 text-sm border-b border-gray-800/30 pb-6"
           >
+            {/* Author Info */}
+            {blog.author && (
+              <div className="flex items-center gap-2 text-gray-400">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 flex items-center justify-center text-white">
+                  <FaUser className="w-3 h-3" />
+                </div>
+                <span className="font-medium text-white">{blog.author.username}</span>
+              </div>
+            )}
+            
             <div className="flex items-center gap-2 text-gray-400">
               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -172,6 +269,11 @@ const BlogDetail = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>{blog.readTime} min read</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-gray-400">
+              <FaComment className="w-4 h-4 text-gray-500" />
+              <span>{comments.length} comments</span>
             </div>
             
             {blog.tags && blog.tags.length > 0 && (
@@ -224,10 +326,115 @@ const BlogDetail = () => {
 
           </motion.div>
           
+          {/* Comments Section */}
+          <motion.div variants={fadeIn} className="mt-12">
+            <h3 className="text-2xl font-bold text-white mb-6">Comments ({comments.length})</h3>
+            
+            {/* Comment Form */}
+            <div className="bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-xl border border-gray-800/50 mb-8">
+              <h4 className="text-xl font-semibold text-white mb-4">Leave a Comment</h4>
+              
+              {isLoggedIn ? (
+                <form onSubmit={handleCommentSubmit} className="space-y-4">
+                  {commentError && (
+                    <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                      {commentError}
+                    </div>
+                  )}
+                  
+                  <div>
+                    <label htmlFor="content" className="block text-sm font-medium text-gray-400 mb-1">Comment</label>
+                    <textarea
+                      id="content"
+                      name="content"
+                      value={commentForm.content}
+                      onChange={handleCommentChange}
+                      rows="4"
+                      className="w-full px-4 py-2 bg-[#272a31] text-gray-200 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                      required
+                    ></textarea>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={submittingComment}
+                      className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:translate-y-[-2px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span>{submittingComment ? 'Submitting...' : 'Post Comment'}</span>
+                      <FaPaperPlane className="w-3 h-3" />
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="bg-[#272a31]/80 rounded-lg p-6 text-center">
+                  <FaLock className="w-8 h-8 mx-auto text-gray-500 mb-3" />
+                  <h5 className="text-white font-medium mb-2">Login Required</h5>
+                  <p className="text-gray-400 mb-4">You need to be logged in to post a comment.</p>
+                  <button
+                    onClick={handleLoginRedirect}
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2"
+                  >
+                    <span>Login to Comment</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Comments List */}
+            <div className="space-y-6">
+              {loadingComments ? (
+                <div className="text-center py-8">
+                  <div className="inline-block w-8 h-8 border-2 border-gray-600 border-t-cyan-500 rounded-full animate-spin"></div>
+                  <p className="mt-2 text-gray-400">Loading comments...</p>
+                </div>
+              ) : comments.length > 0 ? (
+                comments.map(comment => (
+                  <motion.div
+                    key={comment._id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-[#1a1d25]/40 backdrop-blur-sm rounded-xl p-5 border border-gray-800/30 hover:border-gray-700/50 transition-all duration-300"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500/80 to-purple-500/80 flex items-center justify-center text-white flex-shrink-0">
+                        {comment.user && comment.user.username ? comment.user.username.charAt(0).toUpperCase() : '?'}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex flex-wrap justify-between items-center mb-2">
+                          <h4 className="text-white font-medium">{comment.user ? comment.user.username : 'Anonymous'}</h4>
+                          <span className="text-xs text-gray-500">
+                            {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-gray-300">{comment.content}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="text-center py-8 bg-[#1a1d25]/30 rounded-xl border border-gray-800/30">
+                  <FaComment className="w-8 h-8 mx-auto text-gray-600 mb-2" />
+                  <p className="text-gray-400">No comments yet. Be the first to comment!</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+          
           {/* Share and navigation */}
           <motion.div 
             variants={fadeIn}
-            className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-800/30"
+            className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 mt-12 border-t border-gray-800/30"
           >
             <div className="flex items-center gap-4">
               <span className="text-gray-400 text-sm font-medium">Share this article:</span>
@@ -251,8 +458,12 @@ const BlogDetail = () => {
             </div>
             
             <Link 
-              to="/" 
+              to="/blogs" 
               className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:translate-y-[-2px]"
+              onClick={(e) => {
+                // Store current scroll position in sessionStorage before navigating
+                sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+              }}
             >
               <span>More articles</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

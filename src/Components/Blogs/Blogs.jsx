@@ -56,6 +56,16 @@ export default function Blogs() {
     };
 
     window.addEventListener('scroll', handleScroll);
+    
+    // Restore scroll position if coming back from blog detail
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    if (savedScrollPosition) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollPosition));
+        sessionStorage.removeItem('scrollPosition'); // Clear after use
+      }, 100); // Small delay to ensure content is rendered
+    }
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -230,7 +240,14 @@ export default function Blogs() {
               <span className="w-2 h-8 bg-gradient-to-b from-cyan-500 to-purple-500 rounded-full mr-3"></span>
               Featured Article
             </h2>
-            <Link to={`/blog/${featuredBlog._id}`} className="block group">
+            <Link 
+              to={`/blog/${featuredBlog._id}`} 
+              className="block group"
+              onClick={() => {
+                // Store current scroll position before navigating to blog detail
+                sessionStorage.removeItem('scrollPosition');
+              }}
+            >
               <div className="grid grid-cols-1 md:grid-cols-12 gap-8 bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800/50 hover:border-purple-500/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/5 p-0 md:p-0">
                 {featuredBlog.coverImage && (
                   <div className="md:col-span-5 h-64 md:h-auto relative overflow-hidden">
@@ -300,6 +317,10 @@ export default function Blogs() {
                 <Link 
                   to={`/blog/${blog._id}`} 
                   className="block h-full group"
+                  onClick={() => {
+                    // Store current scroll position before navigating to blog detail
+                    sessionStorage.removeItem('scrollPosition');
+                  }}
                 >
                   <article className="flex flex-col h-full bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800/50 hover:border-purple-500/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/5 p-6">
                     {/* Blog Cover Image - Optional */}
