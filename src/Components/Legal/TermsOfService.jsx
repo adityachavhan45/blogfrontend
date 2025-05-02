@@ -36,7 +36,7 @@ export default function TermsOfService() {
       content: (
         <>
           <p>
-            These Terms of Service govern your use of the SolutionBlog website and services operated by SolutionBlog.
+            These Terms of Service govern your use of the LikhoVerse website and services operated by LikhoVerse.
           </p>
           <p>
             By accessing or using our service, you agree to be bound by these Terms. If you disagree with any part of the terms, you may not access the service.
@@ -60,7 +60,7 @@ export default function TermsOfService() {
           
           <h3>Account Types</h3>
           <p>
-            SolutionBlog offers the following types of accounts:
+          LikhoVerse offers the following types of accounts:
           </p>
           <ul>
             <li><strong>Regular User Accounts:</strong> For individuals who want to read, bookmark, and comment on blogs.</li>
@@ -74,13 +74,13 @@ export default function TermsOfService() {
       content: (
         <>
           <p>
-            The service and its original content, features, and functionality are and will remain the exclusive property of SolutionBlog and its licensors. The service is protected by copyright, trademark, and other laws.
+            The service and its original content, features, and functionality are and will remain the exclusive property of LikhoVerse and its licensors. The service is protected by copyright, trademark, and other laws.
           </p>
           <p>
-            Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of SolutionBlog.
+            Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of LikhoVerse.
           </p>
           <p>
-            User-generated content remains the intellectual property of the user who created it, but by posting content on our platform, you grant SolutionBlog a non-exclusive, royalty-free, perpetual, and worldwide license to use, modify, publicly perform, publicly display, reproduce, and distribute such content on and through the service.
+            User-generated content remains the intellectual property of the user who created it, but by posting content on our platform, you grant LikhoVerse a non-exclusive, royalty-free, perpetual, and worldwide license to use, modify, publicly perform, publicly display, reproduce, and distribute such content on and through the service.
           </p>
         </>
       )
@@ -94,9 +94,9 @@ export default function TermsOfService() {
           </p>
           <ul>
             <li>To harass, abuse, or harm another person.</li>
-            <li>To impersonate or attempt to impersonate SolutionBlog, a SolutionBlog employee, another user, or any other person or entity.</li>
+            <li>To impersonate or attempt to impersonate LikhoVerse, a LikhoVerse employee, another user, or any other person or entity.</li>
             <li>In any way that infringes upon the rights of others, or in any way is illegal, threatening, fraudulent, or harmful.</li>
-            <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the service, or which may harm SolutionBlog or users of the service.</li>
+            <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the service, or which may harm LikhoVerse or users of the service.</li>
           </ul>
           
           <p>
@@ -129,7 +129,7 @@ export default function TermsOfService() {
       content: (
         <>
           <p>
-            In no event shall SolutionBlog, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:
+            In no event shall LikhoVerse, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:
           </p>
           <ul>
             <li>Your access to or use of or inability to access or use the service;</li>

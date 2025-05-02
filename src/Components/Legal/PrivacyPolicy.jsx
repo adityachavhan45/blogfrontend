@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
       content: (
         <>
           <p>
-            At SolutionBlog, we respect your privacy and are committed to protecting your personal data. This Privacy Policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
+            At LikhoVerse, we respect your privacy and are committed to protecting your personal data. This Privacy Policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
           </p>
           <p>
             This Privacy Policy applies to all users of our platform, including registered users, subscribers, and visitors. Please read this Privacy Policy carefully to understand our practices regarding your personal data.

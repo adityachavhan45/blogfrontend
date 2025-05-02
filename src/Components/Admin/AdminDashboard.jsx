@@ -57,8 +57,8 @@ const AdminDashboard = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
-                            <span className="text-2xl font-semibold text-[#e052a0]">Solution</span>
-                            <span className="text-2xl font-semibold text-white">Blog</span>
+                            <span className="text-2xl font-semibold text-[#e052a0]">Likho</span>
+                            <span className="text-2xl font-semibold text-white">Verse</span>
                         </div>
                         <div className="flex items-center space-x-4">
 

@@ -39,7 +39,7 @@ export default function Aboutus() {
         <motion.div variants={itemVariants} className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-black mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 animate-gradient">
-              About SolutionBlog
+              About LikhoVerse
             </span>
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">

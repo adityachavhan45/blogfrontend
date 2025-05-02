@@ -68,7 +68,7 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-6">
             <Link to="/" className="inline-block">
               <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
-                SolutionBlog
+              LikhoVerse
               </span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -142,7 +142,7 @@ export default function Footer() {
         >
           <div className="text-center">
             <p className="text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} SolutionBlog. All rights reserved.
+              &copy; {new Date().getFullYear()} LikhoVerse. All rights reserved.
             </p>
           </div>
         </motion.div>

@@ -127,7 +127,7 @@ export default function Header() {
           <motion.div variants={itemVariants}>
             <Link to="/" className="text-2xl font-black">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
-                SolutionBlog
+              LikhoVerse
               </span>
             </Link>
           </motion.div>

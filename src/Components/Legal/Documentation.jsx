@@ -39,7 +39,7 @@ export default function Documentation() {
       content: (
         <>
           <p>
-            Welcome to SolutionBlog! This documentation will help you navigate and make the most of our platform.
+            Welcome to LikhoVerse! This documentation will help you navigate and make the most of our platform.
             Whether you're looking to read blogs, create an account, or interact with our community, you'll find
             all the information you need here.
           </p>
@@ -121,7 +121,7 @@ export default function Documentation() {
       content: (
         <>
           <p>
-            If you encounter any issues while using SolutionBlog, please contact our support team through the
+            If you encounter any issues while using LikhoVerse, please contact our support team through the
             Contact page. We're here to help you with:
           </p>
           <ul>
@@ -137,7 +137,7 @@ export default function Documentation() {
           
           <h3>System Requirements</h3>
           <p>
-            SolutionBlog works best on:
+          LikhoVerse works best on:
           </p>
           <ul>
             <li>Modern browsers (Chrome, Firefox, Safari, Edge)</li>
