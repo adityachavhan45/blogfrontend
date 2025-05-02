@@ -58,12 +58,23 @@ export default function Login() {
     setIsSubmitting(true)
     
     try {
-      const endpoint = isLogin ? '/api/login' : '/api/register'
-      const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+      // Add trailing slash to ensure proper URL formation
+      const apiUrl = import.meta.env.VITE_API_URL.endsWith('/') 
+        ? import.meta.env.VITE_API_URL 
+        : `${import.meta.env.VITE_API_URL}/`;
+      
+      const endpoint = isLogin ? 'api/login' : 'api/register'
+      
+      // Remove the leading slash from endpoint to avoid double slashes
+      const url = `${apiUrl}${endpoint}`
+      console.log('Making API request to:', url)
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies in the request
         body: JSON.stringify({
           username: formData.username,
           email: formData.email,
