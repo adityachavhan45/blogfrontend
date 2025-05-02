@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import BookmarkedBlogs from './BookmarkedBlogs'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -50,11 +51,16 @@ export default function Profile() {
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-400">Account Created</dt>
                 <dd className="mt-1 text-lg text-white">
-                  {new Date(user.createdAt).toLocaleDateString()}
+                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Information not available'}
                 </dd>
               </div>
             </dl>
           </div>
+        </div>
+        
+        {/* Bookmarked Blogs Section */}
+        <div className="mt-8">
+          <BookmarkedBlogs />
         </div>
       </div>
     </div>

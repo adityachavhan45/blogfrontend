@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import PersonalizedRecommendations from '../Recommendations/PersonalizedRecommendations'
 
 export default function Home() {
   const features = [
@@ -122,6 +123,22 @@ export default function Home() {
           ))}
         </motion.div>
 
+        {/* Personalized Recommendations Section */}
+        <motion.div 
+          className="mt-24 mb-24"
+          variants={itemVariants}
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
+              Recommended For You
+            </span>
+          </h2>
+          <p className="text-gray-400 mb-8 max-w-2xl mx-auto text-center">
+            Discover articles tailored to your interests and reading preferences.
+          </p>
+          <PersonalizedRecommendations />
+        </motion.div>
+        
         {/* CTA Section */}
         <motion.div 
           className="mt-24 text-center"

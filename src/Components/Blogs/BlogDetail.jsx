@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
-import { FaUser, FaComment, FaPaperPlane, FaLock } from 'react-icons/fa';
+import { FaUser, FaComment, FaPaperPlane, FaLock, FaBookmark, FaRegBookmark, FaThumbsUp, FaRegThumbsUp } from 'react-icons/fa';
 import './quill-content.css'; // Import the CSS for ReactQuill content
+import ReadingTracker from './ReadingTracker';
+import BlogSummary from './BlogSummary';
+import RelatedBlogs from './RelatedBlogs';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -42,6 +45,8 @@ const BlogDetail = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isContentExpanded, setIsContentExpanded] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const contentRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -59,6 +64,13 @@ const BlogDetail = () => {
     };
   }, [id]);
   
+  // Check interaction status when user is logged in and blog is loaded
+  useEffect(() => {
+    if (isLoggedIn && blog) {
+      checkInteractionStatus();
+    }
+  }, [isLoggedIn, blog, id]);
+  
   // Effect to measure content height after blog loads
   useEffect(() => {
     if (blog && contentRef.current) {
@@ -75,6 +87,75 @@ const BlogDetail = () => {
   const checkLoginStatus = () => {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
+  };
+  
+  const checkInteractionStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${id}/interaction`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setIsBookmarked(data.isBookmarked);
+        setIsLiked(data.isLiked);
+      }
+    } catch (error) {
+      console.error('Error checking interaction status:', error);
+    }
+  };
+  
+  const handleToggleBookmark = async () => {
+    if (!isLoggedIn) {
+      handleLoginRedirect();
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${id}/bookmark`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setIsBookmarked(data.bookmarked);
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
+  
+  const handleToggleLike = async () => {
+    if (!isLoggedIn) {
+      handleLoginRedirect();
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${id}/like`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setIsLiked(data.liked);
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
   };
 
   const fetchBlog = async () => {
@@ -208,6 +289,8 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Invisible component to track reading activity */}
+      {blog && <ReadingTracker blogId={id} />}
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse"></div>
@@ -284,7 +367,31 @@ const BlogDetail = () => {
               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>{blog.readTime} min read</span>
+              <span>{blog.readTime} read</span>
+            </div>
+            
+            <div className="flex items-center gap-4 ml-auto">
+              <button 
+                onClick={handleToggleLike}
+                className="flex items-center gap-1 text-gray-400 hover:text-pink-500 transition-colors"
+              >
+                {isLiked ? (
+                  <FaThumbsUp className="text-pink-500" />
+                ) : (
+                  <FaRegThumbsUp />
+                )}
+              </button>
+              
+              <button 
+                onClick={handleToggleBookmark}
+                className="flex items-center gap-1 text-gray-400 hover:text-cyan-500 transition-colors"
+              >
+                {isBookmarked ? (
+                  <FaBookmark className="text-cyan-500" />
+                ) : (
+                  <FaRegBookmark />
+                )}
+              </button>
             </div>
             
             <div className="flex items-center gap-2 text-gray-400">
@@ -332,6 +439,9 @@ const BlogDetail = () => {
             variants={fadeIn}
             className="bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-2xl border border-gray-800/50 hover:border-gray-700/50 transition-all duration-300"
           >
+            {/* AI-generated blog summary */}
+            {blog && <BlogSummary blogId={id} />}
+            
             <div className="prose prose-lg max-w-none prose-invert prose-headings:text-white prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:text-white prose-p:leading-relaxed prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-cyan-500 prose-blockquote:bg-gray-800/30 prose-blockquote:py-0.5 prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-strong:text-white prose-code:text-pink-400 prose-pre:bg-gray-800/50 prose-pre:border prose-pre:border-gray-700/50 prose-img:rounded-lg prose-img:shadow-lg text-white [&_*]:text-white quill-content">
               <div
                 ref={contentRef}
@@ -503,45 +613,12 @@ const BlogDetail = () => {
             </div>
           </motion.div>
           
-          {/* Share and navigation */}
+          {/* Related blogs section */}
           <motion.div 
             variants={fadeIn}
-            className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 mt-12 border-t border-gray-800/30"
+            className="pt-8 mt-12 border-t border-gray-800/30"
           >
-            <div className="flex items-center gap-4">
-              <span className="text-gray-400 text-sm font-medium">Share this article:</span>
-              <div className="flex gap-3">
-                <button className="w-9 h-9 rounded-full bg-gray-800/70 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300 shadow-md">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
-                  </svg>
-                </button>
-                <button className="w-9 h-9 rounded-full bg-gray-800/70 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300 shadow-md">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path>
-                  </svg>
-                </button>
-                <button className="w-9 h-9 rounded-full bg-gray-800/70 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300 shadow-md">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            <Link 
-              to="/blogs" 
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full text-white font-medium hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:translate-y-[-2px]"
-              onClick={(e) => {
-                // Store current scroll position in sessionStorage before navigating
-                sessionStorage.setItem('scrollPosition', window.scrollY.toString());
-              }}
-            >
-              <span>More articles</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
+            {blog && <RelatedBlogs blogId={id} />}
           </motion.div>
         </article>
       </motion.div>
