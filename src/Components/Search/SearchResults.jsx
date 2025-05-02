@@ -19,7 +19,7 @@ export default function SearchResults() {
 
       try {
         setLoading(true)
-        const response = await fetch(`/api/blogs/search?q=${encodeURIComponent(query)}`)
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs/search?q=${encodeURIComponent(query)}`)
         
         if (!response.ok) {
           throw new Error('Failed to fetch search results')
@@ -105,7 +105,7 @@ export default function SearchResults() {
                 {blog.coverImage && (
                   <div className="h-48 w-full overflow-hidden">
                     <img 
-                      src={blog.coverImage} 
+                      src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`} 
                       alt={blog.title} 
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />

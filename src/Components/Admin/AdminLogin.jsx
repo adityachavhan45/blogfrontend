@@ -22,7 +22,7 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/admin/login', formData);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/login`, formData);
             if (response.data.success) {
                 localStorage.setItem('adminToken', response.data.token);
                 navigate('/admin/dashboard');

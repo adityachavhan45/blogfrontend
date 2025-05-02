@@ -94,7 +94,7 @@ const BlogDetail = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       
-      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${id}/interaction`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${id}/interaction`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -118,7 +118,7 @@ const BlogDetail = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${id}/bookmark`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${id}/bookmark`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -142,7 +142,7 @@ const BlogDetail = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${id}/like`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${id}/like`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -160,7 +160,7 @@ const BlogDetail = () => {
 
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs/${id}`);
       if (!response.ok) throw new Error('Blog not found');
       const data = await response.json();
       setBlog(data);
@@ -173,7 +173,7 @@ const BlogDetail = () => {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/comments/blog/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/comments/blog/${id}`);
       if (!response.ok) throw new Error('Failed to fetch comments');
       const data = await response.json();
       setComments(data);
@@ -203,7 +203,7 @@ const BlogDetail = () => {
         throw new Error('You must be logged in to comment');
       }
       
-      const response = await fetch('http://localhost:5000/api/comments', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -420,7 +420,7 @@ const BlogDetail = () => {
               className="relative rounded-2xl overflow-hidden bg-[#1a1d25]/60 shadow-xl border border-gray-800/50 my-8 group hover:shadow-purple-500/10 transition-all duration-500"
             >
               <img
-                src={`http://localhost:5000${blog.coverImage}`}
+                src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`}
                 alt={blog.title}
                 onClick={() => setShowImageModal(true)}
                 className="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
@@ -650,7 +650,7 @@ const BlogDetail = () => {
               </svg>
             </button>
             <img
-              src={`http://localhost:5000${blog.coverImage}`}
+              src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`}
               alt={blog.title}
               className="max-w-full max-h-[85vh] object-contain mx-auto rounded-xl shadow-2xl border border-gray-800/30"
             />

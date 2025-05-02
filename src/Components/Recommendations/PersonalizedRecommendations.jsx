@@ -57,7 +57,7 @@ const PersonalizedRecommendations = () => {
         };
       }
       
-      const response = await fetch(`http://localhost:5000${url}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}${url}`, {
         headers
       });
       
@@ -90,7 +90,7 @@ const PersonalizedRecommendations = () => {
       
       // For each blog, check if it's bookmarked
       for (const blog of blogs) {
-        const response = await fetch(`http://localhost:5000/api/interactions/blogs/${blog._id}/interaction`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${blog._id}/interaction`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -122,7 +122,7 @@ const PersonalizedRecommendations = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${blogId}/bookmark`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${blogId}/bookmark`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -194,7 +194,7 @@ const PersonalizedRecommendations = () => {
             {blog.coverImage ? (
               <div className="relative h-48 overflow-hidden">
                 <img 
-                  src={`http://localhost:5000${blog.coverImage}`} 
+                  src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`} 
                   alt={blog.title}
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   onError={(e) => {

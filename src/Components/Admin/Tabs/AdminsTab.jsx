@@ -17,7 +17,7 @@ const AdminsTab = () => {
     const fetchAdmins = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5000/api/admin/all', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/all`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -39,7 +39,7 @@ const AdminsTab = () => {
     const handleAdd = async (adminData) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5000/api/admin/add', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const AdminsTab = () => {
 
             // If password is provided, update password first
             if (adminData.password) {
-                response = await fetch(`http://localhost:5000/api/admin/${selectedAdmin._id}/password`, {
+                response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/${selectedAdmin._id}/password`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const AdminsTab = () => {
 
             // Update other admin details
             const { password, ...adminDetails } = adminData;
-            response = await fetch(`http://localhost:5000/api/admin/${selectedAdmin._id}`, {
+            response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/${selectedAdmin._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const AdminsTab = () => {
 
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/${adminId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/${adminId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`

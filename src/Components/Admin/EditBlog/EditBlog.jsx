@@ -24,7 +24,7 @@ const EditBlog = () => {
   const fetchBlog = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/blogs/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/blogs/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -65,7 +65,7 @@ const EditBlog = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/blogs/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/blogs/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

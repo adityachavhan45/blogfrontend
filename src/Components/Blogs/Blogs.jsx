@@ -81,7 +81,7 @@ export default function Blogs() {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/blogs');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`);
       if (!response.ok) {
         throw new Error('Failed to fetch blogs');
       }
@@ -123,7 +123,7 @@ export default function Blogs() {
       
       // For each blog, check if it's bookmarked
       for (const blog of blogs) {
-        const response = await fetch(`http://localhost:5000/api/interactions/blogs/${blog._id}/interaction`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${blog._id}/interaction`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -155,7 +155,7 @@ export default function Blogs() {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${blogId}/bookmark`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${blogId}/bookmark`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -331,7 +331,7 @@ export default function Blogs() {
                 {featuredBlog.coverImage && (
                   <div className="md:col-span-5 h-64 md:h-auto relative overflow-hidden">
                     <img
-                      src={`http://localhost:5000${featuredBlog.coverImage}`}
+                      src={`${import.meta.env.VITE_API_URL}${featuredBlog.coverImage}`}
                       alt={featuredBlog.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
@@ -407,7 +407,7 @@ export default function Blogs() {
                       {blog.coverImage ? (
                         <>
                           <img
-                            src={`http://localhost:5000${blog.coverImage}`}
+                            src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`}
                             alt={blog.title}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             onError={(e) => {

@@ -23,7 +23,7 @@ const BlogsTab = () => {
   const fetchBlogs = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/blogs', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/blogs`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -48,7 +48,7 @@ const BlogsTab = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/blogs/${blogId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/blogs/${blogId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -84,7 +84,7 @@ const ReadingTracker = ({ blogId }) => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:5000/api/recommendations/track-activity', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recommendations/track-activity`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const ReadingTracker = ({ blogId }) => {
     if (!blogId) return;
     
     try {
-      await fetch(`http://localhost:5000/api/interactions/blogs/${blogId}/view`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${blogId}/view`, {
         method: 'POST'
       });
     } catch (error) {

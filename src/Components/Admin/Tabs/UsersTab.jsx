@@ -17,7 +17,7 @@ const UsersTab = () => {
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5000/api/users/all', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/all`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -39,7 +39,7 @@ const UsersTab = () => {
     const handleAdd = async (userData) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5000/api/users/add', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const UsersTab = () => {
 
             // If password is provided, update password first
             if (userData.password) {
-                response = await fetch(`http://localhost:5000/api/users/${selectedUser._id}/password`, {
+                response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${selectedUser._id}/password`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const UsersTab = () => {
 
             // Update other user details
             const { password, ...userDetails } = userData;
-            response = await fetch(`http://localhost:5000/api/users/${selectedUser._id}`, {
+            response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${selectedUser._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const UsersTab = () => {
 
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`

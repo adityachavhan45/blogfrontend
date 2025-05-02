@@ -104,7 +104,7 @@ const AddBlog = () => {
         }
       });
 
-      const response = await fetch('http://localhost:5000/api/admin/blogs', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/blogs`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

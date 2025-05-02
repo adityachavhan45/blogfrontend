@@ -37,7 +37,7 @@ const RelatedBlogs = ({ blogId }) => {
   const fetchRelatedBlogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/ai/blogs/${blogId}/related`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/blogs/${blogId}/related`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch related blogs');

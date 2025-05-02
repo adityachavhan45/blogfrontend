@@ -46,7 +46,7 @@ const BookmarkedBlogs = () => {
         return;
       }
       
-      const response = await fetch('http://localhost:5000/api/interactions/bookmarks', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/bookmarks`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -70,7 +70,7 @@ const BookmarkedBlogs = () => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:5000/api/interactions/blogs/${blogId}/bookmark`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/blogs/${blogId}/bookmark`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -151,7 +151,7 @@ const BookmarkedBlogs = () => {
             <Link to={`/blog/${blog._id}`} className="block">
               <div className="relative h-48 overflow-hidden">
                 <img 
-                  src={`http://localhost:5000${blog.coverImage}`} 
+                  src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`} 
                   alt={blog.title}
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                 />
