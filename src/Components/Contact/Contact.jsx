@@ -83,9 +83,9 @@ export default function Contact() {
                     </p>
                 </motion.div>
 
-                <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 px-4 sm:px-6">
-                    {/* Contact Information */}
-                    <motion.div variants={itemVariants} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 sm:p-8 border border-gray-700">
+                <div className="mt-12 px-4 sm:px-6 max-w-2xl mx-auto">
+                    {/* Contact Information - Commented out for now
+                    <motion.div variants={itemVariants} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 sm:p-8 border border-gray-700 mb-8">
                         <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">Contact Information</h3>
                         <div className="space-y-6">
                             <div className="flex items-start space-x-4">
@@ -108,7 +108,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                     <h4 className="text-lg font-medium text-white">Location</h4>
-                                    <p className="mt-1 text-gray-400">Mumbai, Maharashtra, India</p>
+                                    <p className="mt-1 text-gray-400">Yavatmal, Maharashtra, India</p>
                                 </div>
                             </div>
                             <div className="flex items-start space-x-4">
@@ -124,7 +124,8 @@ export default function Contact() {
                             </div>
                         </div>
                     </motion.div>
-
+                    */}
+                    
                     {/* Contact Form */}
                     <motion.div variants={itemVariants}>
                         <form onSubmit={handleSubmit} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 sm:p-8 border border-gray-700 space-y-6">

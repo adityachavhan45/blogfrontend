@@ -327,38 +327,26 @@ export default function Blogs() {
                 sessionStorage.removeItem('scrollPosition');
               }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800/50 hover:border-purple-500/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/5 p-0 md:p-0">
-                {featuredBlog.coverImage && (
-                  <div className="md:col-span-5 h-64 md:h-auto relative overflow-hidden">
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}${featuredBlog.coverImage}`}
-                      alt={featuredBlog.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1117]/80 via-transparent to-transparent md:bg-gradient-to-l md:from-[#0f1117]/80 md:via-transparent md:to-transparent"></div>
+              <div className="bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800/50 hover:border-purple-500/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/5 p-6">
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow">
+                      {featuredBlog.category}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(featuredBlog.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </span>
                   </div>
-                )}
-                <div className="md:col-span-7 p-6 md:p-8 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow">
-                        {featuredBlog.category}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(featuredBlog.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-500 transition-all duration-300">
-                      {featuredBlog.title}
-                    </h3>
-                    <p className="text-gray-400 mb-6 line-clamp-2">
-                      {featuredBlog.excerpt}
-                    </p>
-                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-500 transition-all duration-300">
+                    {featuredBlog.title}
+                  </h3>
+                  <p className="text-gray-400 mb-6 line-clamp-2">
+                    {featuredBlog.excerpt}
+                  </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-purple-400 group-hover:text-cyan-400 transition-colors duration-300">
                       <span className="text-sm font-medium">Read article</span>
@@ -402,51 +390,11 @@ export default function Blogs() {
                   }}
                 >
                   <article className="flex flex-col h-full bg-[#1a1d25]/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800/50 hover:border-purple-500/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/5 p-6">
-                    {/* Blog Cover Image - Optional */}
-                    <div className="relative h-48 overflow-hidden rounded-t-xl">
-                      {blog.coverImage ? (
-                        <>
-                          <img
-                            src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`}
-                            alt={blog.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            onError={(e) => {
-                              // Hide the image container if image fails to load
-                              e.target.parentNode.style.display = 'none';
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
-                        </>
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-r from-gray-800 to-gray-700 flex items-center justify-center">
-                          <div className="text-sm text-gray-400 font-medium">{blog.category}</div>
-                        </div>
-                      )}
-                      <button
-                        onClick={(e) => handleToggleBookmark(blog._id, e)}
-                        className="absolute top-3 right-3 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10"
-                      >
-                        {bookmarkedBlogs.has(blog._id) ? (
-                          <FaBookmark className="text-cyan-400" />
-                        ) : (
-                          <FaRegBookmark />
-                        )}
-                      </button>
-                    </div>
-                    <div className="absolute top-3 left-3">
+                    <div className="mb-4">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg shadow-purple-500/20">
                         {blog.category}
                       </span>
                     </div>
-                    
-                    {/* Category Badge - Show only if no cover image */}
-                    {!blog.coverImage && (
-                      <div className="mb-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg shadow-purple-500/20">
-                          {blog.category}
-                        </span>
-                      </div>
-                    )}
                     
                     <div className="flex flex-col flex-grow">
                       <h2 className="text-xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-500 transition-all duration-300">

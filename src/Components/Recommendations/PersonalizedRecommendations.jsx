@@ -191,44 +191,6 @@ const PersonalizedRecommendations = () => {
           className="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:translate-y-[-5px]"
         >
           <Link to={`/blog/${blog._id}`} className="block">
-            {blog.coverImage ? (
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={`${import.meta.env.VITE_API_URL}${blog.coverImage}`} 
-                  alt={blog.title}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  onError={(e) => {
-                    // Hide the image container if image fails to load
-                    e.target.parentNode.style.display = 'none';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                <button
-                  onClick={(e) => handleToggleBookmark(blog._id, e)}
-                  className="absolute top-3 right-3 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10"
-                >
-                  {bookmarkedBlogs.has(blog._id) ? (
-                    <FaBookmark className="text-cyan-400" />
-                  ) : (
-                    <FaRegBookmark />
-                  )}
-                </button>
-              </div>
-            ) : (
-              <div className="relative h-24 bg-gradient-to-r from-gray-800 to-gray-700 flex items-center justify-center">
-                <button
-                  onClick={(e) => handleToggleBookmark(blog._id, e)}
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10"
-                >
-                  {bookmarkedBlogs.has(blog._id) ? (
-                    <FaBookmark className="text-cyan-400 text-sm" />
-                  ) : (
-                    <FaRegBookmark className="text-sm" />
-                  )}
-                </button>
-                <div className="text-sm text-gray-400 font-medium">{blog.category}</div>
-              </div>
-            )}
             <div className="p-5">
               <div className="flex items-center mb-3">
                 <span className="text-xs font-semibold px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-400">
