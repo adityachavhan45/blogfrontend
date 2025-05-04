@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 
@@ -14,6 +14,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(true)
+  const [emailChecked, setEmailChecked] = useState(false)
+  const emailTimeout = useRef(null)
 
   // Check if user is already logged in
   useEffect(() => {
@@ -46,9 +50,43 @@ export default function Login() {
     }
   }
 
+  // Function to verify email existence
+  const verifyEmail = async (email) => {
+    try {
+      setIsVerifyingEmail(true)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verify-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error verifying email')
+      }
+
+      return data.exists
+    } catch (err) {
+      console.error('Email verification error:', err)
+      return false
+    } finally {
+      setIsVerifyingEmail(false)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address')
+      return
+    }
     
     if (!isLogin && formData.password !== formData.confirmPassword) {
       setError('Passwords do not match!')
@@ -58,6 +96,18 @@ export default function Login() {
     setIsSubmitting(true)
     
     try {
+      // For registration, verify email existence first
+      if (!isLogin) {
+        const emailExists = await verifyEmail(formData.email)
+        setEmailVerified(emailExists)
+        
+        if (!emailExists) {
+          setError('This email address does not exist or cannot be verified. Please use a valid email.')
+          setIsSubmitting(false)
+          return
+        }
+      }
+      
       const endpoint = isLogin ? '/api/login' : '/api/register'
       const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
         method: 'POST',
@@ -107,6 +157,29 @@ export default function Login() {
       ...prev,
       [name]: value
     }))
+    
+    // If in register mode and email field is changed, verify email after a delay
+    if (!isLogin && name === 'email' && value) {
+      // Clear any existing timeout
+      if (emailTimeout.current) {
+        clearTimeout(emailTimeout.current)
+      }
+      
+      // Only validate if it looks like an email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (emailRegex.test(value)) {
+        setIsVerifyingEmail(true)
+        // Set a new timeout for email verification (1 second delay)
+        emailTimeout.current = setTimeout(async () => {
+          const emailExists = await verifyEmail(value)
+          setEmailVerified(emailExists)
+          setEmailChecked(true)
+        }, 1000)
+      } else {
+        setEmailVerified(false)
+        setEmailChecked(false)
+      }
+    }
   }
 
   const toggleMode = () => {
@@ -183,9 +256,9 @@ export default function Login() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-              Email
+              Email Address
             </label>
-            <div className="mt-1">
+            <div className="mt-1 relative">
               <input
                 id="email"
                 name="email"
@@ -194,9 +267,40 @@ export default function Login() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="block w-full bg-gray-900/50 border border-gray-600 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
-                placeholder="john@example.com"
+                className={`block w-full bg-gray-900/50 border ${!isLogin && !emailVerified && formData.email ? 'border-red-500' : 'border-gray-600'} rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 ${isVerifyingEmail ? 'pr-10' : ''}`}
+                placeholder="you@example.com"
               />
+              {isVerifyingEmail && (
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg className="animate-spin h-5 w-5 text-pink-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+              )}
+              {!isLogin && !isVerifyingEmail && emailChecked && (
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  {emailVerified ? (
+                    <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              )}
+              {!isLogin && !emailVerified && formData.email && !isVerifyingEmail && emailChecked && (
+                <div className="text-xs text-red-500 mt-1">
+                  This email could not be verified. Please use a real email address.
+                </div>
+              )}
+              {!isLogin && emailVerified && formData.email && !isVerifyingEmail && emailChecked && (
+                <div className="text-xs text-green-500 mt-1">
+                  Email verified successfully!
+                </div>
+              )}
             </div>
           </div>
 
