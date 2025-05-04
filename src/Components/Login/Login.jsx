@@ -248,7 +248,7 @@ export default function Login() {
                   value={formData.username}
                   onChange={handleChange}
                   className="block w-full bg-gray-900/50 border border-gray-600 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
-                  placeholder="johndoe"
+                  placeholder="Your Name"
                 />
               </div>
             </div>
