@@ -142,7 +142,7 @@ export default function Footer() {
         >
           <div className="text-center">
             <p className="text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} LikhoVerse. All rights reserved. Aditya Chavhan
+              &copy; {new Date().getFullYear()} LikhoVerse. All rights reserved. 
             </p>
           </div>
         </motion.div>
