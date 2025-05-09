@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
+import SEOHead from '../SEO/SEOHead'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -260,6 +261,29 @@ export default function Blogs() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* SEO Optimization */}
+      <SEOHead
+        title="Explore Our Blogs"
+        description="Discover insightful articles, tutorials, and stories on our blog. Stay updated with the latest content from our expert writers."
+        keywords={[...categories.filter(cat => cat !== 'All'), 'blog', 'articles', 'tutorials', 'knowledge', 'insights']}
+        ogType="website"
+        canonicalUrl={`${window.location.origin}/blogs`}
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          'headline': 'LikhoVerse Blog Articles',
+          'description': 'Discover insightful articles, tutorials, and stories on our blog.',
+          'url': `${window.location.origin}/blogs`,
+          'publisher': {
+            '@type': 'Organization',
+            'name': 'LikhoVerse',
+            'logo': {
+              '@type': 'ImageObject',
+              'url': `${window.location.origin}/LikhoVerse.png`
+            }
+          }
+        }}
+      />
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse decor-element"></div>

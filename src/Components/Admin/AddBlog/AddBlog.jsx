@@ -4,7 +4,9 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './custom-quill.css'; // Import custom styles for the editor
 import { motion } from 'framer-motion';
-import { FaImage, FaTags, FaClock, FaFolder } from 'react-icons/fa';
+import { FaImage, FaTags, FaClock, FaFolder, FaSearch } from 'react-icons/fa';
+import KeywordSuggestions from './KeywordSuggestions';
+import SEOChecklist from '../SEOChecklist';
 
 const AddBlog = () => {
   const navigate = useNavigate();
@@ -15,7 +17,11 @@ const AddBlog = () => {
     category: '',
     readTime: '',
     tags: [],
-    coverImage: null
+    coverImage: null,
+    seoTitle: '',
+    seoDescription: '',
+    seoKeywords: [],
+    focusKeyword: ''
   });
   const [error, setError] = useState(null);
   const [tagInput, setTagInput] = useState('');
@@ -342,8 +348,113 @@ const AddBlog = () => {
             </div>
           </div>
 
+          {/* SEO Optimization Section */}
+          <div className="mt-8 border-t border-gray-800 pt-6">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+              <FaSearch className="mr-2 text-[#e052a0]" />
+              SEO Optimization
+            </h3>
+            <p className="text-gray-400 text-sm mb-4">
+              Optimize your blog post for search engines to increase visibility and traffic.
+            </p>
+
+            {/* Keyword Suggestions */}
+            <KeywordSuggestions 
+              title={formData.title} 
+              content={formData.content}
+              onSelectKeyword={(keywords) => {
+                setFormData(prev => ({
+                  ...prev,
+                  seoKeywords: keywords,
+                  tags: [...new Set([...prev.tags, ...keywords])]
+                }));
+              }} 
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">
+                  SEO Title (For search engines)
+                </label>
+                <input
+                  type="text"
+                  name="seoTitle"
+                  value={formData.seoTitle || formData.title}
+                  onChange={handleInputChange}
+                  placeholder="Optimized title for search engines"
+                  className="w-full px-4 py-2 bg-[#272a31] text-gray-200 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e052a0] focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {(formData.seoTitle || formData.title).length}/60 characters
+                  {(formData.seoTitle || formData.title).length > 60 && (
+                    <span className="text-red-400"> (Too long)</span>
+                  )}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">
+                  Focus Keyword
+                </label>
+                <input
+                  type="text"
+                  name="focusKeyword"
+                  value={formData.focusKeyword}
+                  onChange={handleInputChange}
+                  placeholder="Main keyword to rank for"
+                  className="w-full px-4 py-2 bg-[#272a31] text-gray-200 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e052a0] focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
+                Meta Description
+              </label>
+              <textarea
+                name="seoDescription"
+                value={formData.seoDescription || formData.excerpt}
+                onChange={handleInputChange}
+                placeholder="Brief description for search results (150-160 characters ideal)"
+                rows="3"
+                className="w-full px-4 py-2 bg-[#272a31] text-gray-200 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e052a0] focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {(formData.seoDescription || formData.excerpt).length}/160 characters
+                {(formData.seoDescription || formData.excerpt).length > 160 && (
+                  <span className="text-red-400"> (Too long)</span>
+                )}
+              </p>
+            </div>
+
+            <div className="mt-4 bg-gray-800/30 p-4 rounded-lg">
+              <h4 className="font-medium text-white mb-2">SEO Preview</h4>
+              <div className="bg-white p-3 rounded">
+                <p className="text-blue-600 text-lg font-medium truncate">
+                  {formData.seoTitle || formData.title || 'Blog Title'}
+                </p>
+                <p className="text-green-700 text-sm">
+                  {window.location.origin}/blogs/{formData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')}
+                </p>
+                <p className="text-gray-600 text-sm line-clamp-2">
+                  {formData.seoDescription || formData.excerpt || 'Blog description will appear here...'}
+                </p>
+              </div>
+            </div>
+            
+            {/* SEO Checklist */}
+            <SEOChecklist
+              title={formData.title}
+              content={formData.content}
+              focusKeyword={formData.focusKeyword}
+              seoTitle={formData.seoTitle}
+              seoDescription={formData.seoDescription}
+              tags={formData.tags}
+            />
+          </div>
+
           {/* Submit Button */}
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end space-x-4 mt-8">
             <button
               type="button"
               onClick={() => navigate('/admin/dashboard')}

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import PersonalizedRecommendations from '../Recommendations/PersonalizedRecommendations'
+import SEOHead from '../SEO/SEOHead'
 
 export default function Home() {
   const features = [
@@ -53,6 +54,26 @@ export default function Home() {
   }
 
   return (
+    <>
+      {/* SEO Optimization */}
+      <SEOHead
+        title="Home"
+        description="LikhoVerse - Your knowledge hub for insightful blogs, tutorials, and expert solutions. Join our community of readers and writers."
+        keywords={['blog', 'knowledge hub', 'tech insights', 'expert solutions', 'community', 'tutorials', 'articles']}
+        ogType="website"
+        canonicalUrl={window.location.origin}
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          'name': 'LikhoVerse',
+          'url': window.location.origin,
+          'potentialAction': {
+            '@type': 'SearchAction',
+            'target': `${window.location.origin}/search?q={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+          }
+        }}
+      />
     <div className="min-h-screen bg-gray-900 pt-20 pb-12 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -174,5 +195,6 @@ export default function Home() {
         </motion.div>
       </motion.div>
     </div>
+    </>
   )
 }

@@ -7,6 +7,7 @@ import './quill-content.css'; // Import the CSS for ReactQuill content
 import ReadingTracker from './ReadingTracker';
 import BlogSummary from './BlogSummary';
 import RelatedBlogs from './RelatedBlogs';
+import SEOHead from '../SEO/SEOHead';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -237,6 +238,37 @@ const BlogDetail = () => {
     navigate('/login', { state: { from: `/blogs/${id}` } });
   };
 
+  // Create structured data for the blog post (Schema.org)
+  const getStructuredData = () => {
+    if (!blog) return null;
+    
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      'headline': blog.title,
+      'description': blog.summary || '',
+      'image': blog.coverImage ? `${import.meta.env.VITE_API_URL}${blog.coverImage}` : '',
+      'datePublished': blog.createdAt,
+      'dateModified': blog.updatedAt,
+      'author': {
+        '@type': 'Person',
+        'name': blog.author?.name || 'LikhoVerse Author'
+      },
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'LikhoVerse',
+        'logo': {
+          '@type': 'ImageObject',
+          'url': `${window.location.origin}/LikhoVerse.png`
+        }
+      },
+      'mainEntityOfPage': {
+        '@type': 'WebPage',
+        '@id': window.location.href
+      }
+    };
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
@@ -289,6 +321,18 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* SEO Optimization */}
+      {blog && (
+        <SEOHead
+          title={blog.title}
+          description={blog.summary || blog.content.substring(0, 160).replace(/<[^>]*>/g, '')}
+          keywords={blog.tags || []}
+          ogImage={blog.coverImage ? `${import.meta.env.VITE_API_URL}${blog.coverImage}` : ''}
+          ogType="article"
+          canonicalUrl={`${window.location.origin}/blogs/${id}`}
+          structuredData={getStructuredData()}
+        />
+      )}
       {/* Invisible component to track reading activity */}
       {blog && <ReadingTracker blogId={id} />}
       {/* Decorative elements */}
