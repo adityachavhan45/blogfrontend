@@ -16,6 +16,36 @@ const SEOHead = ({
   // Default description if none provided
   const defaultDescription = 'LikhoVerse is a platform for insightful blogs, articles, and knowledge sharing. Explore our content and join our community of readers and writers.';
   
+  // Ensure image URLs are absolute
+  const ensureAbsoluteUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    
+    // If it's a relative URL starting with /, ensure it has the correct domain
+    if (url.startsWith('/')) {
+      // Use the site's domain for production or localhost for development
+      const domain = window.location.hostname === 'localhost' 
+        ? `${window.location.protocol}//${window.location.host}`
+        : 'https://likhoverse.in';
+      return `${domain}${url}`;
+    }
+    
+    // If it's a path from the API
+    if (url.includes('/uploads/')) {
+      return url; // This should already be a full URL from the API
+    }
+    
+    return url;
+  };
+  
+  // Ensure canonical URL is absolute
+  const absoluteCanonicalUrl = canonicalUrl 
+    ? (canonicalUrl.startsWith('http') ? canonicalUrl : `https://likhoverse.in${canonicalUrl.startsWith('/') ? canonicalUrl : `/${canonicalUrl}`}`)
+    : '';
+  
+  // Ensure ogImage is absolute
+  const absoluteOgImage = ensureAbsoluteUrl(ogImage);
+  
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -26,21 +56,21 @@ const SEOHead = ({
       )}
       
       {/* Canonical URL */}
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      {absoluteCanonicalUrl && <link rel="canonical" href={absoluteCanonicalUrl} />}
       
       {/* Open Graph Tags */}
       <meta property="og:title" content={formattedTitle} />
       <meta property="og:description" content={description || defaultDescription} />
       <meta property="og:type" content={ogType} />
-      {ogImage && <meta property="og:image" content={ogImage} />}
-      {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+      {absoluteOgImage && <meta property="og:image" content={absoluteOgImage} />}
+      {absoluteCanonicalUrl && <meta property="og:url" content={absoluteCanonicalUrl} />}
       <meta property="og:site_name" content="LikhoVerse" />
       
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={formattedTitle} />
       <meta name="twitter:description" content={description || defaultDescription} />
-      {ogImage && <meta name="twitter:image" content={ogImage} />}
+      {absoluteOgImage && <meta name="twitter:image" content={absoluteOgImage} />}
       
       {/* Structured Data for SEO */}
       {structuredData && (

@@ -242,12 +242,45 @@ const BlogDetail = () => {
   const getStructuredData = () => {
     if (!blog) return null;
     
+    // Helper function to ensure URLs are absolute
+    const ensureAbsoluteUrl = (url) => {
+      if (!url) return '';
+      if (url.startsWith('http')) return url;
+      
+      // For API URLs
+      if (url.startsWith('/uploads/') || url.startsWith('/api/')) {
+        return `${import.meta.env.VITE_API_URL}${url}`;
+      }
+      
+      // For static assets and other URLs
+      const domain = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+        ? `${window.location.protocol}//${window.location.host}`
+        : 'https://likhoverse.in';
+      return `${domain}${url.startsWith('/') ? url : `/${url}`}`;
+    };
+    
+    // Get the current URL safely (works in both client and server environments)
+    const getCurrentUrl = () => {
+      if (typeof window === 'undefined') {
+        return `https://likhoverse.in/blogs/${id}`;
+      }
+      return window.location.href;
+    };
+    
+    // Get the site origin safely
+    const getSiteOrigin = () => {
+      if (typeof window === 'undefined') {
+        return 'https://likhoverse.in';
+      }
+      return window.location.origin;
+    };
+    
     return {
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
       'headline': blog.title,
       'description': blog.summary || '',
-      'image': blog.coverImage ? `${import.meta.env.VITE_API_URL}${blog.coverImage}` : '',
+      'image': blog.coverImage ? ensureAbsoluteUrl(blog.coverImage) : '',
       'datePublished': blog.createdAt,
       'dateModified': blog.updatedAt,
       'author': {
@@ -259,12 +292,12 @@ const BlogDetail = () => {
         'name': 'LikhoVerse',
         'logo': {
           '@type': 'ImageObject',
-          'url': `${window.location.origin}/LikhoVerse.png`
+          'url': `${getSiteOrigin()}/LikhoVerse.png`
         }
       },
       'mainEntityOfPage': {
         '@type': 'WebPage',
-        '@id': window.location.href
+        '@id': getCurrentUrl()
       }
     };
   };
@@ -329,7 +362,7 @@ const BlogDetail = () => {
           keywords={blog.tags || []}
           ogImage={blog.coverImage ? `${import.meta.env.VITE_API_URL}${blog.coverImage}` : ''}
           ogType="article"
-          canonicalUrl={`${window.location.origin}/blogs/${id}`}
+          canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/blogs/${id}` : `https://likhoverse.in/blogs/${id}`}
           structuredData={getStructuredData()}
         />
       )}
