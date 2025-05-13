@@ -7,7 +7,8 @@ import './quill-content.css'; // Import the CSS for ReactQuill content
 import ReadingTracker from './ReadingTracker';
 import BlogSummary from './BlogSummary';
 import RelatedBlogs from './RelatedBlogs';
-import SEOHead from '../SEO/SEOHead';
+import { updateBlogMetaTags } from '../../utils/seoUtils';
+import { injectBlogStructuredData } from '../../utils/structuredDataUtils';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -60,8 +61,11 @@ const BlogDetail = () => {
     document.body.classList.add('bg-[#0f1117]');
     // Only scroll to top when the blog ID changes
     window.scrollTo(0, 0);
+    
     return () => {
       document.body.classList.remove('bg-[#0f1117]');
+      // Reset title when component unmounts
+      document.title = 'LikhoVerse - Your Knowledge Hub';
     };
   }, [id]);
   
@@ -82,6 +86,14 @@ const BlogDetail = () => {
       }, 100);
       
       return () => clearTimeout(timer);
+    }
+  }, [blog]);
+  
+  // Update SEO meta tags when blog data is loaded
+  useEffect(() => {
+    if (blog) {
+      updateBlogMetaTags(blog);
+      injectBlogStructuredData(blog);
     }
   }, [blog]);
   
@@ -238,70 +250,6 @@ const BlogDetail = () => {
     navigate('/login', { state: { from: `/blogs/${id}` } });
   };
 
-  // Create structured data for the blog post (Schema.org)
-  const getStructuredData = () => {
-    if (!blog) return null;
-    
-    // Helper function to ensure URLs are absolute
-    const ensureAbsoluteUrl = (url) => {
-      if (!url) return '';
-      if (url.startsWith('http')) return url;
-      
-      // For API URLs
-      if (url.startsWith('/uploads/') || url.startsWith('/api/')) {
-        return `${import.meta.env.VITE_API_URL}${url}`;
-      }
-      
-      // For static assets and other URLs
-      const domain = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-        ? `${window.location.protocol}//${window.location.host}`
-        : 'https://likhoverse.in';
-      return `${domain}${url.startsWith('/') ? url : `/${url}`}`;
-    };
-    
-    // Get the current URL safely (works in both client and server environments)
-    const getCurrentUrl = () => {
-      if (typeof window === 'undefined') {
-        return `https://likhoverse.in/blogs/${id}`;
-      }
-      return window.location.href;
-    };
-    
-    // Get the site origin safely
-    const getSiteOrigin = () => {
-      if (typeof window === 'undefined') {
-        return 'https://likhoverse.in';
-      }
-      return window.location.origin;
-    };
-    
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      'headline': blog.title,
-      'description': blog.summary || '',
-      'image': blog.coverImage ? ensureAbsoluteUrl(blog.coverImage) : '',
-      'datePublished': blog.createdAt,
-      'dateModified': blog.updatedAt,
-      'author': {
-        '@type': 'Person',
-        'name': blog.author?.name || 'LikhoVerse Author'
-      },
-      'publisher': {
-        '@type': 'Organization',
-        'name': 'LikhoVerse',
-        'logo': {
-          '@type': 'ImageObject',
-          'url': `${getSiteOrigin()}/LikhoVerse.png`
-        }
-      },
-      'mainEntityOfPage': {
-        '@type': 'WebPage',
-        '@id': getCurrentUrl()
-      }
-    };
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
@@ -330,7 +278,7 @@ const BlogDetail = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center bg-[#1a1d25]/80 backdrop-blur-lg p-8 rounded-2xl border border-red-500/20 max-w-md"
-        >
+        >SEO for your SolutionBlog project, similar to how it would work in a 
           <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-red-500/10 mb-4">
             <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -354,18 +302,6 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* SEO Optimization */}
-      {blog && (
-        <SEOHead
-          title={blog.title}
-          description={blog.summary || blog.content.substring(0, 160).replace(/<[^>]*>/g, '')}
-          keywords={blog.tags || []}
-          ogImage={blog.coverImage ? `${import.meta.env.VITE_API_URL}${blog.coverImage}` : ''}
-          ogType="article"
-          canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/blogs/${id}` : `https://likhoverse.in/blogs/${id}`}
-          structuredData={getStructuredData()}
-        />
-      )}
       {/* Invisible component to track reading activity */}
       {blog && <ReadingTracker blogId={id} />}
       {/* Decorative elements */}
@@ -519,7 +455,7 @@ const BlogDetail = () => {
             {/* AI-generated blog summary */}
             {blog && <BlogSummary blogId={id} />}
             
-            <div className="prose prose-lg max-w-none prose-invert prose-headings:text-white prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:text-white prose-p:leading-relaxed prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-cyan-500 prose-blockquote:bg-gray-800/30 prose-blockquote:py-0.5 prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-strong:text-white prose-code:text-pink-400 prose-pre:bg-gray-800/50 prose-pre:border prose-pre:border-gray-700/50 prose-img:rounded-lg prose-img:shadow-lg text-white [&_*]:text-white quill-content">
+            <div className="prose prose-lg max-w-none prose-invert prose-headings:text-white prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:text-white prose-p:leading-relaxed prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-cyan-500 prose-blockquote:bg-gray-800/30 prose-blockquote:py-0.5 prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-img:rounded-lg prose-img:shadow-lg text-white [&_*]:text-white quill-content">
               <div
                 ref={contentRef}
                 className={!isContentExpanded && contentHeight > 500 ? 'max-h-[500px] overflow-hidden relative' : ''}
@@ -576,7 +512,7 @@ const BlogDetail = () => {
                     <>
                       <span>Read More</span>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7m-7 7h18" />
                       </svg>
                     </>
                   )}

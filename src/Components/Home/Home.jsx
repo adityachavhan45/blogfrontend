@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useEffect } from 'react'
 import PersonalizedRecommendations from '../Recommendations/PersonalizedRecommendations'
-import SEOHead from '../SEO/SEOHead'
+import { updateOpenGraphTags, updateTwitterTags, updateCanonicalUrl } from '../../utils/seoUtils'
+import { injectHomeStructuredData } from '../../utils/structuredDataUtils'
 
 export default function Home() {
   const features = [
@@ -53,148 +55,163 @@ export default function Home() {
     }
   }
 
+  // Update SEO meta tags when component mounts
+  useEffect(() => {
+    // Update document title
+    document.title = 'LikhoVerse - Your Knowledge Hub';
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Discover insightful blogs, articles, and knowledge sharing on LikhoVerse. Join our community of readers and writers to explore diverse topics and expand your knowledge.');
+    }
+    
+    // Update Open Graph meta tags
+    updateOpenGraphTags({
+      title: 'LikhoVerse - Your Knowledge Hub',
+      description: 'Discover insightful blogs, articles, and knowledge sharing on LikhoVerse. Join our community of readers and writers to explore diverse topics and expand your knowledge.',
+      url: window.location.origin,
+      image: '/home-banner.jpg',
+      type: 'website'
+    });
+    
+    // Update Twitter Card meta tags
+    updateTwitterTags({
+      title: 'LikhoVerse - Your Knowledge Hub',
+      description: 'Discover insightful blogs, articles, and knowledge sharing on LikhoVerse. Join our community of readers and writers to explore diverse topics and expand your knowledge.',
+      image: '/home-banner.jpg'
+    });
+    
+    // Update canonical URL
+    updateCanonicalUrl(window.location.origin);
+    
+    // Inject structured data
+    injectHomeStructuredData();
+  }, []);
+
   return (
     <>
-      {/* SEO Optimization */}
-      <SEOHead
-        title="Home"
-        description="LikhoVerse - Your knowledge hub for insightful blogs, tutorials, and expert solutions. Join our community of readers and writers."
-        keywords={['blog', 'knowledge hub', 'tech insights', 'expert solutions', 'community', 'tutorials', 'articles']}
-        ogType="website"
-        canonicalUrl={window.location.origin}
-        structuredData={{
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          'name': 'LikhoVerse',
-          'url': window.location.origin,
-          'potentialAction': {
-            '@type': 'SearchAction',
-            'target': `${window.location.origin}/search?q={search_term_string}`,
-            'query-input': 'required name=search_term_string'
-          }
-        }}
-      />
-    <div className="min-h-screen bg-gray-900 pt-20 pb-12 relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-pink-600/10 blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 -left-40 w-80 h-80 rounded-full bg-purple-600/10 blur-3xl animate-pulse delay-300"></div>
-        <div className="absolute -bottom-40 left-1/2 w-80 h-80 rounded-full bg-orange-600/10 blur-3xl animate-pulse delay-700"></div>
-      </div>
+      <div className="min-h-screen bg-gray-900 pt-20 pb-12 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-pink-600/10 blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 -left-40 w-80 h-80 rounded-full bg-purple-600/10 blur-3xl animate-pulse delay-300"></div>
+          <div className="absolute -bottom-40 left-1/2 w-80 h-80 rounded-full bg-orange-600/10 blur-3xl animate-pulse delay-700"></div>
+        </div>
 
-      <motion.div 
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Hero Section */}
         <motion.div 
-          className="text-center max-w-3xl mx-auto pt-16 pb-24"
-          variants={itemVariants}
-        >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-8">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 animate-gradient">
-              Your Source for Tech Solutions
-            </span>
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-400 mb-12 leading-relaxed">
-            Discover expert insights, tutorials, and best practices in web development.
-            Join our community of developers and stay ahead in the tech world.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/blogs"
-              className="w-full sm:w-auto px-8 py-3 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
-            >
-              Explore Blogs
-            </Link>
-            <Link
-              to="/contact"
-              className="w-full sm:w-auto px-8 py-3 rounded-lg border border-gray-700 text-white font-medium hover:bg-gray-800/50 transition-all duration-300"
-            >
-              Get in Touch
-            </Link>
-          </div>
-        </motion.div>
-
-        {/* Features Section */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
           variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              variants={itemVariants}
-              className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-pink-500/10 transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-orange-500/10 flex items-center justify-center mb-4">
-                <div className="text-pink-400">
-                  {feature.icon}
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-gray-400">
-                {feature.description}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Personalized Recommendations Section */}
-        <motion.div 
-          className="mt-24 mb-24"
-          variants={itemVariants}
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
-              Recommended For You
-            </span>
-          </h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto text-center">
-            Discover articles tailored to your interests and reading preferences.
-          </p>
-          <PersonalizedRecommendations />
-        </motion.div>
-        
-        {/* CTA Section */}
-        <motion.div 
-          className="mt-24 text-center"
-          variants={itemVariants}
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-8">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
-              Ready to Get Started?
-            </span>
-          </h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-            Join our community of developers and start exploring the latest in tech solutions.
-          </p>
-          <Link
-            to="/login"
-            className="inline-flex items-center px-8 py-3 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
+          {/* Hero Section */}
+          <motion.div 
+            className="text-center max-w-3xl mx-auto pt-16 pb-24"
+            variants={itemVariants}
           >
-            Join Now
-            <svg 
-              className="ml-2 w-5 h-5" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-8">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 animate-gradient">
+                Your Source for Tech Solutions
+              </span>
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-400 mb-12 leading-relaxed">
+              Discover expert insights, tutorials, and best practices in web development.
+              Join our community of developers and stay ahead in the tech world.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/blogs"
+                className="w-full sm:w-auto px-8 py-3 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
+              >
+                Explore Blogs
+              </Link>
+              <Link
+                to="/contact"
+                className="w-full sm:w-auto px-8 py-3 rounded-lg border border-gray-700 text-white font-medium hover:bg-gray-800/50 transition-all duration-300"
+              >
+                Get in Touch
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Features Section */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12"
+            variants={containerVariants}
+          >
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                variants={itemVariants}
+                className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-pink-500/10 transition-all duration-300"
+              >
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-orange-500/10 flex items-center justify-center mb-4">
+                  <div className="text-pink-400">
+                    {feature.icon}
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Personalized Recommendations Section */}
+          <motion.div 
+            className="mt-24 mb-24"
+            variants={itemVariants}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
+                Recommended For You
+              </span>
+            </h2>
+            <p className="text-gray-400 mb-8 max-w-2xl mx-auto text-center">
+              Discover articles tailored to your interests and reading preferences.
+            </p>
+            <PersonalizedRecommendations />
+          </motion.div>
+          
+          {/* CTA Section */}
+          <motion.div 
+            className="mt-24 text-center"
+            variants={itemVariants}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500">
+                Ready to Get Started?
+              </span>
+            </h2>
+            <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+              Join our community of developers and start exploring the latest in tech solutions.
+            </p>
+            <Link
+              to="/login"
+              className="inline-flex items-center px-8 py-3 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M13 7l5 5m0 0l-5 5m5-5H6" 
-              />
-            </svg>
-          </Link>
+              Join Now
+              <svg 
+                className="ml-2 w-5 h-5" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                />
+              </svg>
+            </Link>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </div>
+      </div>
     </>
   )
 }
