@@ -264,6 +264,7 @@ export default function Blogs() {
       {/* SEO Optimization */}
       <Helmet>
         <title>Home Page | My React App</title>
+        
         <meta name="description" content="This is the home page of my React application." />
         <meta name="keywords" content="React, SEO, Helmet" />
       </Helmet>
