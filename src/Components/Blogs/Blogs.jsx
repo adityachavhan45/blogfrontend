@@ -262,12 +262,12 @@ export default function Blogs() {
   return (
     <div className="min-h-screen bg-gray-900 pt-28 pb-12 relative overflow-hidden">
       {/* SEO Optimization */}
-      <Helmet>
+      {/* <Helmet>
         <title>Home Page | My React App</title>
         
         <meta name="description" content="This is the home page of my React application." />
         <meta name="keywords" content="React, SEO, Helmet" />
-      </Helmet>
+      </Helmet> */}
       <h1>Welcome to the Home Page</h1>
       
       {/* Decorative elements */}
