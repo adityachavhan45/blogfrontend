@@ -9,6 +9,8 @@ import KeywordSuggestions from './KeywordSuggestions';
 import SEOChecklist from '../SEOChecklist';
 
 const AddBlog = () => {
+  // Prevent multiple submissions
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
@@ -89,6 +91,12 @@ const AddBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // If a submission is already in progress, do nothing
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    e.preventDefault();
     setError(null);
     try {
       const token = localStorage.getItem('adminToken');
@@ -126,8 +134,10 @@ const AddBlog = () => {
       }
 
       navigate('/admin/dashboard');
+      setIsSubmitting(false);
     } catch (error) {
       console.error('Error saving blog:', error);
+      setIsSubmitting(false);
       setError('Failed to save blog. Please try again.');
     }
   };
@@ -464,9 +474,10 @@ const AddBlog = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-3 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-[#e052a0] to-[#f15c41] hover:from-[#d0408f] hover:to-[#e04d32] transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+              disabled={isSubmitting}
+              className={`px-6 py-3 text-sm font-medium rounded-lg text-white transition-all duration-200 transform ${isSubmitting ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-[#e052a0] to-[#f15c41] hover:from-[#d0408f] hover:to-[#e04d32] hover:scale-[1.02] active:scale-[0.98]'}`}
             >
-              Publish Blog
+              {isSubmitting ? 'Publishing...' : 'Publish Blog'}
             </button>
           </div>
         </form>

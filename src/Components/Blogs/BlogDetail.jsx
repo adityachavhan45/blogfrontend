@@ -7,7 +7,7 @@ import './quill-content.css'; // Import the CSS for ReactQuill content
 import ReadingTracker from './ReadingTracker';
 import BlogSummary from './BlogSummary';
 import RelatedBlogs from './RelatedBlogs';
-import { updateBlogMetaTags } from '../../utils/seoUtils';
+import { updateBlogMetaTags } from '../../utils/seoUtils.jsx';
 import { injectBlogStructuredData } from '../../utils/structuredDataUtils';
 
 const fadeIn = {
@@ -89,10 +89,9 @@ const BlogDetail = () => {
     }
   }, [blog]);
   
-  // Update SEO meta tags when blog data is loaded
+  // Inject JSON-LD structured data when blog data is loaded
   useEffect(() => {
     if (blog) {
-      updateBlogMetaTags(blog);
       injectBlogStructuredData(blog);
     }
   }, [blog]);
@@ -302,6 +301,7 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {blog && updateBlogMetaTags(blog)}
       {/* Invisible component to track reading activity */}
       {blog && <ReadingTracker blogId={id} />}
       {/* Decorative elements */}
