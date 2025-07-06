@@ -1,0 +1,168 @@
+/* Styles for rendering ReactQuill content in the blog detail view */
+
+/* Basic content styling */
+.quill-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.quill-content h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+  color: white;
+}
+
+.quill-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  color: white;
+}
+
+.quill-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+  color: #e0e0e0;
+}
+
+/* List styling */
+.quill-content ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.quill-content ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.quill-content li {
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+}
+
+/* Blockquote styling */
+.quill-content blockquote {
+  border-left: 4px solid #e052a0;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  color: #d1d5db;
+  background-color: rgba(26, 29, 37, 0.5);
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+/* Code block styling */
+.quill-content pre {
+  background-color: #1a1d25;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  color: #e0e0e0;
+}
+
+.quill-content code {
+  font-family: monospace;
+  color: #e052a0;
+  background-color: rgba(26, 29, 37, 0.5);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+}
+
+/* Link styling */
+.quill-content a {
+  color: #e052a0;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.quill-content a:hover {
+  color: #f15c41;
+  text-decoration: underline;
+}
+
+/* Image styling */
+.quill-content img {
+  max-width: 100%;
+  height: auto;
+  max-height: 500px; /* adjust as needed */
+  object-fit: contain;
+  display: block;
+  margin: 1.5rem auto;
+  border-radius: 0.75rem;
+}
+
+
+
+/* Table styling */
+.quill-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.quill-content th {
+  background-color: #1a1d25;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  border: 1px solid #3f4555;
+}
+
+.quill-content td {
+  padding: 0.75rem;
+  border: 1px solid #3f4555;
+  color: #e0e0e0;
+}
+
+/* Alignment classes */
+.quill-content .ql-align-center {
+  text-align: center;
+}
+
+.quill-content .ql-align-right {
+  text-align: right;
+}
+
+.quill-content .ql-align-justify {
+  text-align: justify;
+}
+
+/* Indent classes */
+.quill-content .ql-indent-1 {
+  padding-left: 3em;
+}
+
+.quill-content .ql-indent-2 {
+  padding-left: 6em;
+}
+
+/* Text formatting */
+.quill-content strong {
+  font-weight: 700;
+  color: white;
+}
+
+.quill-content em {
+  font-style: italic;
+}
+
+.quill-content u {
+  text-decoration: underline;
+}
+
+.quill-content s {
+  text-decoration: line-through;
+}
