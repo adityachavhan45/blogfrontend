@@ -93,7 +93,6 @@
 }
 
 /* Image styling */
-
  .quill-content img {
   max-width: 100%;
   height: auto;
@@ -103,8 +102,6 @@
   margin: 1.5rem auto;
   border-radius: 0.75rem;
 }
-
-
 
 /* Table styling */
 .quill-content table {
