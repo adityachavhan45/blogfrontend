@@ -38,7 +38,7 @@ const BlogsTab = () => {
     }
   };
 
-
+ 
   const handleEdit = (blog) => {
     navigate(`/admin/blogs/edit/${blog._id}`);
   };
