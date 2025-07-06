@@ -319,11 +319,7 @@ const AddBlog = () => {
                       }}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                     >
-<<<<<<< HEAD
-                      
-=======
-                      ×
->>>>>>> 7227c4e2530d29859c544043803142f29f527095
+
                     </button>
                   </div>
                 ) : (
@@ -480,7 +476,4 @@ const AddBlog = () => {
 };
 
 export default AddBlog;
-<<<<<<< HEAD
- 
-=======
->>>>>>> 7227c4e2530d29859c544043803142f29f527095
+
